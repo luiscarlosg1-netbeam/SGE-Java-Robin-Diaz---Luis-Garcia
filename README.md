@@ -1,41 +1,115 @@
 # SGE-Java-Robin-Diaz---Luis-Garcia
-graph TD
-    A([Inicio]) --> B[Inicializar Variables:<br/>totalEstudiantes = 0<br/>banderaSalir = false]
-    B --> C{¿banderaSalir es falsa?}
-    
-    C -- Sí --> D[/Mostrar Menú/]
-    D --> E[/Leer Opción/]
-    E --> F{Opción elegida}
-    
-    F -- 1 --> G[Llamar a agregarEstudiante]
-    G --> H[/Leer ID y Nombre/]
-    H --> I[Añadir a lista y totalEstudiantes++]
-    I --> C
-    
-    F -- 2 --> J[Llamar a mostrarLista]
-    J --> K{¿Lista vacía?}
-    K -- Sí --> L[/Mostrar: Lista vacía/]
-    K -- No --> M[/Recorrer lista e imprimir/]
-    L --> C
-    M --> C
-    
-    F -- 3 --> N[Llamar a buscarPorID]
-    N --> O[/Leer ID de búsqueda/]
-    O --> P{¿ID encontrado?}
-    P -- Sí --> Q[/Mostrar Nombre/]
-    P -- No --> R[/Mostrar: No encontrado/]
-    Q --> C
-    R --> C
-    
-    F -- 4 --> S[banderaSalir = true]
-    S --> T[/Mostrar: Saliendo del sistema/]
-    T --> C
-    
-    F -- Otro --> U[/Mostrar: Opción no válida/]
-    U --> C
-    
-    C -- No --> V([Fin])
 
-    style A fill:#f9f,stroke:#333,stroke-width:2px
-    style V fill:#f9f,stroke:#333,stroke-width:2px
-    style F fill:#fff4dd,stroke:#d4a017,stroke-width:2px
+/*SISTEMA DE GESTIÓN DE ESTUDIANTES (SGE)
+Autores: Robin Arley Diaz Lizarazo - Luis Carlos García Romero
+FACULTAD DE INGENIERIA
+ALGORITMOS Y PROGRAMACIÓN -2317-1A
+Tutor: SERGIO ALEXANDER MORA NOVOA 
+MAYO 2026*/
+
+package sistemagestionestudiantes;
+
+import java.util.ArrayList;
+import java.util.Scanner;
+
+public class SistemaGestionEstudiantes {
+    // Variables especiales (Uso especial de variables: conteo y bandera)
+    static int totalEstudiantes = 0; 
+    static boolean banderaSalir = false; 
+    static ArrayList<Estudiante> listaEstudiantes = new ArrayList<>(); 
+    static Scanner teclado = new Scanner(System.in);
+
+    public static void main(String[] args) {
+        // Repetición condicionada al comienzo (while)
+        while (!banderaSalir) {
+            mostrarMenu();
+            int opcion = validarEntrada();
+
+            // Decisión múltiple (switch)
+            switch (opcion) {
+                case 1:
+                    agregarEstudiante();
+                    break;
+                case 2:
+                    mostrarLista();
+                    break;
+                case 3:
+                    buscarPorID();
+                    break;
+                case 4:
+                    banderaSalir = true; 
+                    System.out.println("Saliendo del sistema...");
+                    break;
+                default:
+                    System.out.println("Opción no válida. Intente de nuevo.");
+            }
+        }
+    }
+
+    // --- MÉTODOS (Unidades de código reutilizables) ---
+
+    public static void mostrarMenu() {
+        System.out.println("\n--- SGE: GESTIÓN DE ESTUDIANTES ---");
+        System.out.println("1. Agregar Estudiante");
+        System.out.println("2. Mostrar Todos");
+        System.out.println("3. Buscar por ID");
+        System.out.println("4. Salir");
+        System.out.print("Seleccione: ");
+    }
+
+    public static int validarEntrada() {
+        try {
+            return Integer.parseInt(teclado.next());
+        } catch (NumberFormatException e) {
+            return -1; 
+        }
+    }
+
+    public static void agregarEstudiante() {
+        System.out.print("Ingrese ID: ");
+        String id = teclado.next();
+        System.out.print("Ingrese Nombre: ");
+        String nombre = teclado.next();
+        
+        listaEstudiantes.add(new Estudiante(id, nombre));
+        totalEstudiantes++; // Variable de conteo
+        System.out.println("Estudiante agregado con éxito.");
+    }
+
+    public static void mostrarLista() {
+        if (listaEstudiantes.isEmpty()) {
+            System.out.println("La lista está vacía.");
+        } else {
+            System.out.println("\nLista de Estudiantes (Total: " + totalEstudiantes + "):");
+            for (Estudiante e : listaEstudiantes) {
+                System.out.println("ID: " + e.id + " | Nombre: " + e.nombre);
+            }
+        }
+    }
+
+    public static void buscarPorID() {
+        System.out.print("ID a buscar: ");
+        String busqueda = teclado.next();
+        boolean encontrado = false; // Variable bandera
+
+        for (Estudiante e : listaEstudiantes) {
+            if (e.id.equals(busqueda)) {
+                System.out.println("Encontrado -> Nombre: " + e.nombre);
+                encontrado = true;
+                break;
+            }
+        }
+        if (!encontrado) System.out.println("Estudiante no encontrado.");
+    }
+}
+
+// Clase de apoyo para la estructura de datos
+class Estudiante {
+    String id;
+    String nombre;
+
+    Estudiante(String id, String nombre) {
+        this.id = id;
+        this.nombre = nombre;
+    }
+}
